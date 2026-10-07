@@ -40,11 +40,11 @@
             background-color: #f8fafc;
         }
         .pulse-danger {
-            animation: pulse-red 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+            animation: pulse-red 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
         }
         @keyframes pulse-red {
             0%, 100% { opacity: 1; }
-            50% { opacity: .6; }
+            50% { opacity: .5; }
         }
         /* Custom scrollbar */
         ::-webkit-scrollbar {
@@ -63,16 +63,16 @@
         }
     </style>
 </head>
-<body class="text-slate-800 min-h-screen flex flex-col antialiased">
+<body class="text-slate-800 min-h-screen flex flex-col antialiased bg-slate-50">
 
     <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
             <div class="flex items-center space-x-3">
-                <div class="bg-indigo-600 text-white p-2 rounded-xl shadow-md flex items-center justify-center">
-                    <i data-lucide="wrench" class="w-6 h-6"></i>
+                <div class="bg-indigo-600 text-white p-2.5 rounded-xl shadow-md flex items-center justify-center">
+                    <i data-lucide="wrench" class="w-5 h-5"></i>
                 </div>
                 <div>
-                    <h1 class="text-lg font-bold text-slate-900 leading-tight">学校備品 貸出管理システム</h1>
+                    <h1 class="text-base sm:text-lg font-bold text-slate-900 leading-tight">学校備品 貸出管理</h1>
                     <p class="text-xs text-slate-500 hidden sm:block">機材・工具・教材のリアルタイム貸出記録</p>
                 </div>
             </div>
@@ -83,10 +83,10 @@
                     <img id="user-avatar" class="w-7 h-7 rounded-full object-cover border border-indigo-200" src="" alt="ユーザー">
                     <div class="text-left hidden md:block">
                         <p id="user-name" class="text-xs font-semibold text-slate-800 leading-none"></p>
-                        <p id="user-email" class="text-[10px] text-slate-500 leading-tight"></p>
+                        <p id="user-email" class="text-[10px] text-slate-500 leading-tight max-w-[120px] truncate"></p>
                     </div>
                 </div>
-                <button id="btn-logout" class="text-xs text-slate-600 hover:text-red-600 font-medium py-1.5 px-3 rounded-lg border border-slate-200 hover:border-red-200 hover:bg-red-50 transition flex items-center gap-1.5">
+                <button id="btn-logout" class="text-xs text-slate-600 hover:text-rose-600 font-medium py-1.5 px-3 rounded-xl border border-slate-200 hover:border-rose-200 hover:bg-rose-50 transition flex items-center gap-1.5">
                     <i data-lucide="log-out" class="w-4 h-4"></i>
                     <span class="hidden sm:inline">ログアウト</span>
                 </button>
@@ -96,15 +96,15 @@
 
     <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
         
-        <!-- Login Screen (Shown when logged out) -->
+        <!-- Auth Required Screen -->
         <div id="auth-screen" class="max-w-md mx-auto my-12 bg-white rounded-2xl shadow-xl border border-slate-100 p-8 text-center">
             <div class="w-16 h-16 bg-indigo-50 rounded-2xl flex items-center justify-center mx-auto mb-5 text-indigo-600">
                 <i data-lucide="shield-check" class="w-8 h-8"></i>
             </div>
             <h2 class="text-2xl font-bold text-slate-900 mb-2">ログインが必要です</h2>
-            <p class="text-sm text-slate-600 mb-6">学校備品管理システムにアクセスするには、Googleアカウントで認証を行ってください。</p>
+            <p class="text-sm text-slate-600 mb-6">備品の貸出・返却を記録するには、Googleアカウントでログインしてください。</p>
             
-            <button id="btn-google-login" class="w-full bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 font-semibold py-3 px-4 rounded-xl shadow-sm transition flex items-center justify-center gap-3 mb-4">
+            <button id="btn-google-login" class="w-full bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 font-semibold py-3 px-4 rounded-xl shadow-sm transition flex items-center justify-center gap-3 mb-4 active:scale-[0.98]">
                 <svg class="w-5 h-5" viewBox="0 0 24 24">
                     <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
                     <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
@@ -120,200 +120,229 @@
             </div>
 
             <button id="btn-guest-login" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium py-2.5 px-4 rounded-xl text-sm transition">
-                ゲスト / デモモードで試用
+                ゲスト / 試用モードでログイン
             </button>
-            <p class="text-xs text-slate-400 mt-4">※アカウント情報は貸出記録の管理者情報として記録されます。</p>
+            <p class="text-xs text-slate-400 mt-4">※ログイン中の名前は、貸出者名として自動補完されます。</p>
         </div>
 
-        <!-- Protected Dashboard Content (Shown when logged in) -->
+        <!-- Protected Dashboard Content -->
         <div id="dashboard-screen" class="hidden space-y-6">
             
-            <!-- Key Metrics Overview Banner -->
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
+            <!-- Metrics Cards -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
+                <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm flex items-center justify-between">
                     <div>
-                        <p class="text-xs font-medium text-slate-500">総登録件数</p>
+                        <p class="text-xs font-medium text-slate-500">総件数</p>
                         <p id="stat-total" class="text-2xl font-bold text-slate-800">0</p>
                     </div>
-                    <div class="p-3 bg-indigo-50 text-indigo-600 rounded-lg">
+                    <div class="p-2.5 bg-slate-100 text-slate-600 rounded-xl">
                         <i data-lucide="archive" class="w-5 h-5"></i>
                     </div>
                 </div>
 
-                <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
+                <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm flex items-center justify-between">
                     <div>
                         <p class="text-xs font-medium text-slate-500">貸出中 (未返却)</p>
                         <p id="stat-borrowed" class="text-2xl font-bold text-blue-600">0</p>
                     </div>
-                    <div class="p-3 bg-blue-50 text-blue-600 rounded-lg">
+                    <div class="p-2.5 bg-blue-50 text-blue-600 rounded-xl">
                         <i data-lucide="clock" class="w-5 h-5"></i>
                     </div>
                 </div>
 
-                <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
+                <div class="bg-white p-4 rounded-2xl border border-rose-200/80 bg-rose-50/30 shadow-sm flex items-center justify-between">
                     <div>
-                        <p class="text-xs font-medium text-slate-500">返却期限切れ</p>
+                        <p class="text-xs font-medium text-rose-600">返却遅延 (延滞)</p>
                         <p id="stat-overdue" class="text-2xl font-bold text-rose-600">0</p>
                     </div>
-                    <div class="p-3 bg-rose-50 text-rose-600 rounded-lg">
+                    <div class="p-2.5 bg-rose-100 text-rose-600 rounded-xl">
                         <i data-lucide="alert-triangle" class="w-5 h-5"></i>
                     </div>
                 </div>
 
-                <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
+                <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm flex items-center justify-between">
                     <div>
                         <p class="text-xs font-medium text-slate-500">返却済み</p>
                         <p id="stat-returned" class="text-2xl font-bold text-emerald-600">0</p>
                     </div>
-                    <div class="p-3 bg-emerald-50 text-emerald-600 rounded-lg">
+                    <div class="p-2.5 bg-emerald-50 text-emerald-600 rounded-xl">
                         <i data-lucide="check-circle-2" class="w-5 h-5"></i>
                     </div>
                 </div>
             </div>
 
-            <!-- Filter & Action Controls -->
-            <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4">
+            <!-- Controls (Search & Filter & Add Button) -->
+            <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
                 
-                <!-- Search Input -->
-                <div class="relative flex-1 min-w-[240px]">
-                    <i data-lucide="search" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                    <input type="text" id="input-search" placeholder="備品名や借りた人の名前で検索..." class="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition">
+                <!-- Search Box -->
+                <div class="relative flex-1">
+                    <i data-lucide="search" class="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                    <input type="text" id="input-search" placeholder="備品名や借りた人の名前でリアルタイム検索..." class="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition">
                 </div>
 
-                <!-- Status Tabs Filter -->
-                <div class="flex items-center bg-slate-100 p-1 rounded-xl overflow-x-auto">
-                    <button class="filter-tab active px-3 py-1.5 text-xs font-medium rounded-lg text-slate-700 transition" data-filter="all">すべて</button>
-                    <button class="filter-tab px-3 py-1.5 text-xs font-medium rounded-lg text-slate-600 hover:text-slate-900 transition" data-filter="borrowed">未返却</button>
-                    <button class="filter-tab px-3 py-1.5 text-xs font-medium rounded-lg text-slate-600 hover:text-slate-900 transition" data-filter="overdue">期限切れ</button>
-                    <button class="filter-tab px-3 py-1.5 text-xs font-medium rounded-lg text-slate-600 hover:text-slate-900 transition" data-filter="returned">返却済み</button>
+                <!-- Status Filter Tabs -->
+                <div class="flex items-center bg-slate-100 p-1 rounded-xl overflow-x-auto shrink-0">
+                    <button class="filter-tab px-3 py-1.5 text-xs font-medium rounded-lg text-slate-600 transition whitespace-nowrap" data-filter="all">すべて</button>
+                    <button class="filter-tab px-3 py-1.5 text-xs font-medium rounded-lg text-slate-600 transition whitespace-nowrap" data-filter="borrowed">未返却</button>
+                    <button class="filter-tab px-3 py-1.5 text-xs font-medium rounded-lg text-slate-600 transition whitespace-nowrap flex items-center gap-1" data-filter="overdue">
+                        <span>延滞中</span>
+                        <span id="badge-overdue-count" class="hidden bg-rose-500 text-white text-[10px] px-1.5 py-0.2 rounded-full font-bold">0</span>
+                    </button>
+                    <button class="filter-tab px-3 py-1.5 text-xs font-medium rounded-lg text-slate-600 transition whitespace-nowrap" data-filter="returned">返却済み</button>
                 </div>
 
                 <!-- Add Button -->
-                <button id="btn-open-add-modal" class="bg-indigo-600 hover:bg-indigo-700 text-white font-medium px-4 py-2 rounded-xl text-sm shadow-sm transition flex items-center justify-center gap-2 shrink-0">
+                <button id="btn-open-add-modal" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-4 py-2.5 rounded-xl text-sm shadow-sm transition flex items-center justify-center gap-2 shrink-0 active:scale-[0.98]">
                     <i data-lucide="plus" class="w-4 h-4"></i>
                     <span>新規貸出を登録</span>
                 </button>
             </div>
 
-            <!-- Borrowings List (Table & Cards) -->
-            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+            <!-- Equipment List Container -->
+            <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
                 
                 <!-- Desktop Table View -->
                 <div class="overflow-x-auto hidden md:block">
                     <table class="w-full text-left border-collapse">
                         <thead>
-                            <tr class="bg-slate-50 border-b border-slate-200 text-xs text-slate-500 font-semibold uppercase tracking-wider">
-                                <th class="py-3 px-4">ステータス</th>
-                                <th class="py-3 px-4">備品名</th>
-                                <th class="py-3 px-4">借りた人の名前</th>
-                                <th class="py-3 px-4">貸出日</th>
-                                <th class="py-3 px-4">返却予定日</th>
-                                <th class="py-3 px-4 text-right">操作</th>
+                            <tr class="bg-slate-50 border-b border-slate-200/80 text-xs text-slate-500 font-semibold uppercase tracking-wider">
+                                <th class="py-3.5 px-4">返却状況</th>
+                                <th class="py-3.5 px-4">備品名</th>
+                                <th class="py-3.5 px-4">借りた人の名前</th>
+                                <th class="py-3.5 px-4">貸出日</th>
+                                <th class="py-3.5 px-4">返却予定日</th>
+                                <th class="py-3.5 px-4 text-right">操作</th>
                             </tr>
                         </thead>
                         <tbody id="table-body" class="divide-y divide-slate-100 text-sm">
-                            <!-- JS Dynamic Content -->
+                            <!-- Dynamic Content -->
                         </tbody>
                     </table>
                 </div>
 
-                <!-- Mobile Card View -->
+                <!-- Mobile Responsive Card View -->
                 <div id="card-list" class="block md:hidden divide-y divide-slate-100">
-                    <!-- JS Dynamic Content -->
+                    <!-- Dynamic Content -->
                 </div>
 
-                <!-- Empty State -->
-                <div id="empty-state" class="hidden py-12 text-center">
+                <!-- Empty Data State -->
+                <div id="empty-state" class="hidden py-16 text-center px-4">
                     <div class="w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center mx-auto text-slate-400 mb-3">
                         <i data-lucide="inbox" class="w-6 h-6"></i>
                     </div>
-                    <p class="text-slate-600 font-medium">該当する貸出記録が見つかりません</p>
-                    <p class="text-xs text-slate-400 mt-1">検索ワードを変更するか、新しい貸出を登録してください。</p>
+                    <p class="text-slate-700 font-semibold text-sm">該当する貸出記録がありません</p>
+                    <p class="text-xs text-slate-400 mt-1">検索条件を変更するか、「新規貸出を登録」ボタンから追加してください。</p>
                 </div>
             </div>
 
         </div>
     </main>
 
-    <!-- Add / Edit Modal -->
-    <div id="modal-record" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-white rounded-2xl shadow-xl border border-slate-100 w-full max-w-lg overflow-hidden transform transition-all">
+    <!-- Add / Edit Record Modal -->
+    <div id="modal-record" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-2xl shadow-2xl border border-slate-100 w-full max-w-lg overflow-hidden transform transition-all max-h-[90vh] flex flex-col">
             
-            <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50">
-                <h3 id="modal-title" class="font-bold text-slate-800 text-base">新規貸出記録の追加</h3>
+            <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50 shrink-0">
+                <h3 id="modal-title" class="font-bold text-slate-800 text-base flex items-center gap-2">
+                    <i data-lucide="plus-circle" class="w-5 h-5 text-indigo-600"></i>
+                    <span>新規貸出の登録</span>
+                </h3>
                 <button id="btn-close-modal" class="text-slate-400 hover:text-slate-600 p-1 rounded-lg">
                     <i data-lucide="x" class="w-5 h-5"></i>
                 </button>
             </div>
 
-            <form id="form-borrowing" class="p-6 space-y-4">
+            <form id="form-borrowing" class="p-6 space-y-4 overflow-y-auto flex-grow" novalidate>
                 <input type="hidden" id="input-edit-id">
+
+                <!-- Form Global Validation Alert -->
+                <div id="form-error-alert" class="hidden bg-rose-50 border border-rose-200 text-rose-700 px-3.5 py-2.5 rounded-xl text-xs flex items-center gap-2">
+                    <i data-lucide="alert-circle" class="w-4 h-4 shrink-0 text-rose-500"></i>
+                    <span id="form-error-message">未入力または不備のある項目があります。確認してください。</span>
+                </div>
 
                 <!-- 1. 備品名 -->
                 <div>
-                    <label class="block text-xs font-semibold text-slate-700 mb-1">備品名 <span class="text-rose-500">*</span></label>
-                    <input type="text" id="input-item-name" required placeholder="例：プロジェクター EPSON-01" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white">
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">
+                        1. 備品名 <span class="text-rose-500">*</span>
+                    </label>
+                    <input type="text" id="input-item-name" placeholder="例：プロジェクター EPSON-01" class="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition">
+                    <p id="error-item-name" class="hidden text-[11px] text-rose-500 mt-1">※備品名を入力してください</p>
+                    
+                    <!-- Quick Tag Helpers -->
                     <div class="flex flex-wrap gap-1.5 mt-2">
-                        <span class="preset-tag text-[11px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full cursor-pointer hover:bg-indigo-50 hover:text-indigo-600 transition">プロジェクター</span>
-                        <span class="preset-tag text-[11px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full cursor-pointer hover:bg-indigo-50 hover:text-indigo-600 transition">一眼レフカメラ</span>
-                        <span class="preset-tag text-[11px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full cursor-pointer hover:bg-indigo-50 hover:text-indigo-600 transition">電動ドライバー</span>
-                        <span class="preset-tag text-[11px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full cursor-pointer hover:bg-indigo-50 hover:text-indigo-600 transition">マイク・スピーカー</span>
+                        <span class="preset-tag text-[11px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded-md cursor-pointer hover:bg-indigo-50 hover:text-indigo-600 transition">一眼レフカメラ</span>
+                        <span class="preset-tag text-[11px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded-md cursor-pointer hover:bg-indigo-50 hover:text-indigo-600 transition">プロジェクター</span>
+                        <span class="preset-tag text-[11px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded-md cursor-pointer hover:bg-indigo-50 hover:text-indigo-600 transition">電動ドライバー</span>
+                        <span class="preset-tag text-[11px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded-md cursor-pointer hover:bg-indigo-50 hover:text-indigo-600 transition">ワイヤレスマイク</span>
                     </div>
                 </div>
 
                 <!-- 2. 借りた人の名前 -->
                 <div>
-                    <label class="block text-xs font-semibold text-slate-700 mb-1">借りた人の名前 <span class="text-rose-500">*</span></label>
-                    <input type="text" id="input-borrower-name" required placeholder="例：山田 太郎 (2年A組)" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white">
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">
+                        2. 借りた人の名前 <span class="text-rose-500">*</span>
+                    </label>
+                    <input type="text" id="input-borrower-name" placeholder="例：山田 太郎 (2年A組)" class="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition">
+                    <p id="error-borrower-name" class="hidden text-[11px] text-rose-500 mt-1">※借りた人の名前を入力してください</p>
+                    <p class="text-[10px] text-slate-400 mt-1">※ログインユーザー名が自動セットされています（変更可能）</p>
                 </div>
 
                 <!-- 3 & 4. 貸出日 & 返却予定日 -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-xs font-semibold text-slate-700 mb-1">貸出日 <span class="text-rose-500">*</span></label>
-                        <input type="date" id="input-borrow-date" required class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white">
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">
+                            3. 貸出日 <span class="text-rose-500">*</span>
+                        </label>
+                        <input type="date" id="input-borrow-date" class="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition">
+                        <p id="error-borrow-date" class="hidden text-[11px] text-rose-500 mt-1">※貸出日を選択してください</p>
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-slate-700 mb-1">返却予定日 <span class="text-rose-500">*</span></label>
-                        <input type="date" id="input-due-date" required class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white">
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">
+                            4. 返却予定日 <span class="text-rose-500">*</span>
+                        </label>
+                        <input type="date" id="input-due-date" class="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition">
+                        <p id="error-due-date" class="hidden text-[11px] text-rose-500 mt-1">※返却予定日を選択してください</p>
                     </div>
                 </div>
 
                 <!-- 5. 返却状況 -->
                 <div>
-                    <label class="block text-xs font-semibold text-slate-700 mb-1">返却状況 <span class="text-rose-500">*</span></label>
-                    <select id="input-status" required class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white">
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">
+                        5. 返却状況 <span class="text-rose-500">*</span>
+                    </label>
+                    <select id="input-status" class="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition">
                         <option value="未返却">未返却</option>
                         <option value="返却済み">返却済み</option>
                     </select>
                 </div>
 
-                <div class="pt-4 flex justify-end gap-3 border-t border-slate-100">
+                <div class="pt-4 flex justify-end gap-3 border-t border-slate-100 shrink-0">
                     <button type="button" id="btn-cancel-modal" class="px-4 py-2 border border-slate-200 hover:bg-slate-50 text-slate-700 text-sm font-medium rounded-xl transition">キャンセル</button>
-                    <button type="submit" id="btn-save-record" class="px-5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold rounded-xl shadow-sm transition">登録する</button>
+                    <button type="submit" id="btn-save-record" class="px-5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold rounded-xl shadow-sm transition active:scale-[0.98]">登録する</button>
                 </div>
             </form>
 
         </div>
     </div>
 
-    <!-- Custom Confirm Delete Modal -->
-    <div id="modal-confirm" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <!-- Confirm Delete Modal (No alert/confirm used) -->
+    <div id="modal-confirm" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
         <div class="bg-white rounded-2xl shadow-xl border border-slate-100 w-full max-w-sm p-6 text-center">
             <div class="w-12 h-12 bg-rose-50 text-rose-600 rounded-full flex items-center justify-center mx-auto mb-4">
                 <i data-lucide="trash-2" class="w-6 h-6"></i>
             </div>
-            <h3 class="text-base font-bold text-slate-800 mb-1">記録を削除しますか？</h3>
-            <p class="text-xs text-slate-500 mb-6">この操作は取り消せません。削除してよろしいですか？</p>
+            <h3 class="text-base font-bold text-slate-800 mb-1">貸出記録を削除しますか？</h3>
+            <p class="text-xs text-slate-500 mb-6">削除すると復元できません。本当に削除しますか？</p>
             <div class="flex items-center justify-center gap-3">
-                <button id="btn-cancel-delete" class="w-full py-2 border border-slate-200 text-slate-700 text-xs font-medium rounded-xl hover:bg-slate-50 transition">キャンセル</button>
-                <button id="btn-confirm-delete" class="w-full py-2 bg-rose-600 text-white text-xs font-semibold rounded-xl hover:bg-rose-700 transition">削除する</button>
+                <button id="btn-cancel-delete" class="w-full py-2.5 border border-slate-200 text-slate-700 text-xs font-medium rounded-xl hover:bg-slate-50 transition">キャンセル</button>
+                <button id="btn-confirm-delete" class="w-full py-2.5 bg-rose-600 text-white text-xs font-semibold rounded-xl hover:bg-rose-700 transition">削除する</button>
             </div>
         </div>
     </div>
 
-    <!-- Toast Notification Container -->
-    <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 max-w-xs w-full pointer-events-none"></div>
+    <!-- Toast Notification Overlay -->
+    <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 max-w-xs w-full pointer-events-none px-4 sm:px-0"></div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
@@ -336,12 +365,12 @@
             onSnapshot 
         } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // Firebase Configuration Setup
+        // Global Environment Variables
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'school-equipment-app';
         const firebaseConfig = typeof __firebase_config !== 'undefined' 
             ? JSON.parse(__firebase_config) 
             : {
-               apiKey: "AIzaSyC8H-WYCVuG82tci3QNA5Ewo7kRtPv6IKA",
+                apiKey: "AIzaSyC8H-WYCVuG82tci3QNA5Ewo7kRtPv6IKA",
   authDomain: "tuisiyou.firebaseapp.com",
   projectId: "tuisiyou",
   storageBucket: "tuisiyou.firebasestorage.app",
@@ -360,7 +389,7 @@
         let searchQuery = '';
         let targetDeleteId = null;
 
-        // UI Element References
+        // UI DOM Elements
         const authScreen = document.getElementById('auth-screen');
         const dashboardScreen = document.getElementById('dashboard-screen');
         const userProfileBar = document.getElementById('user-profile-bar');
@@ -383,28 +412,39 @@
         const inputStatus = document.getElementById('input-status');
         const inputEditId = document.getElementById('input-edit-id');
 
-        // Utility Functions
         function getTodayString() {
             const today = new Date();
-            return today.toISOString().split('T')[0];
+            const yyyy = today.getFullYear();
+            const mm = String(today.getMonth() + 1).padStart(2, '0');
+            const dd = String(today.getDate()).padStart(2, '0');
+            return `${yyyy}-${mm}-${dd}`;
         }
 
         function getFutureDateString(daysAhead) {
             const date = new Date();
             date.setDate(date.getDate() + daysAhead);
-            return date.toISOString().split('T')[0];
+            const yyyy = date.getFullYear();
+            const mm = String(date.getMonth() + 1).padStart(2, '0');
+            const dd = String(date.getDate()).padStart(2, '0');
+            return `${yyyy}-${mm}-${dd}`;
         }
 
+        // Strict Overdue Check
         function isOverdue(dueDateStr, status) {
             if (status === '返却済み') return false;
             if (!dueDateStr) return false;
-            const today = new Date().setHours(0,0,0,0);
-            const due = new Date(dueDateStr).setHours(0,0,0,0);
+            
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            const due = new Date(dueDateStr);
+            due.setHours(0, 0, 0, 0);
+
             return due < today;
         }
 
         function formatDateJa(dateStr) {
-            if (!dateStr) return '';
+            if (!dateStr) return '-';
             const parts = dateStr.split('-');
             if (parts.length === 3) {
                 return `${parts[0]}年${parseInt(parts[1], 10)}月${parseInt(parts[2], 10)}日`;
@@ -422,13 +462,18 @@
                 info: 'bg-slate-800 text-white border-slate-700'
             };
 
-            toast.className = `p-3 rounded-xl shadow-lg text-xs font-medium border flex items-center justify-between transition-all transform translate-y-2 opacity-0 pointer-events-auto ${colorMap[type] || colorMap.info}`;
+            toast.className = `p-3.5 rounded-xl shadow-xl text-xs font-semibold border flex items-center justify-between transition-all transform translate-y-2 opacity-0 pointer-events-auto ${colorMap[type] || colorMap.info}`;
             toast.innerHTML = `
-                <span>${message}</span>
-                <button onclick="this.parentElement.remove()" class="ml-2 text-slate-300 hover:text-white">&times;</button>
+                <div class="flex items-center gap-2">
+                    <i data-lucide="${type === 'success' ? 'check-circle-2' : type === 'error' ? 'alert-triangle' : 'info'}" class="w-4 h-4"></i>
+                    <span>${escapeHtml(message)}</span>
+                </div>
+                <button onclick="this.parentElement.remove()" class="ml-3 text-slate-300 hover:text-white">&times;</button>
             `;
 
             container.appendChild(toast);
+            lucide.createIcons();
+
             setTimeout(() => {
                 toast.classList.remove('translate-y-2', 'opacity-0');
             }, 10);
@@ -436,10 +481,9 @@
             setTimeout(() => {
                 toast.classList.add('opacity-0');
                 setTimeout(() => toast.remove(), 300);
-            }, 3000);
+            }, 3500);
         }
 
-        // Auth State Change Handler
         onAuthStateChanged(auth, (user) => {
             currentUser = user;
             if (user) {
@@ -447,7 +491,8 @@
                 dashboardScreen.classList.remove('hidden');
                 userProfileBar.classList.remove('hidden');
 
-                userName.textContent = user.displayName || 'ゲストユーザー';
+                const displayName = user.displayName || 'ゲストユーザー';
+                userName.textContent = displayName;
                 userEmail.textContent = user.email || 'guest@school.local';
                 userAvatar.src = user.photoURL || `https://api.dicebear.com/7.x/bottts/svg?seed=${user.uid}`;
 
@@ -458,22 +503,23 @@
                 userProfileBar.classList.add('hidden');
                 borrowings = [];
             }
+            lucide.createIcons();
         });
 
-        // Google Sign-In
+        // Google Sign-In Trigger
         btnGoogleLogin.addEventListener('click', async () => {
             try {
                 const provider = new GoogleAuthProvider();
                 await signInWithPopup(auth, provider);
                 showToast('Googleアカウントでログインしました', 'success');
             } catch (err) {
-                console.warn('Google Popup Login Error:', err);
-                showToast('Googleログインが失敗したためデモモードで継続します', 'info');
+                console.warn('Google Auth popup failed, using guest mode:', err);
+                showToast('Googleログインに失敗したため、デモモードで継続します', 'info');
                 loginAsGuest();
             }
         });
 
-        // Guest Login Fallback
+        // Guest / Demo Login Fallback
         async function loginAsGuest() {
             try {
                 if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
@@ -481,25 +527,24 @@
                 } else {
                     await signInAnonymously(auth);
                 }
-                showToast('お試し用アカウントでログインしました', 'info');
+                showToast('ゲストモードでログインしました', 'info');
             } catch (err) {
-                console.error('Guest Auth failed:', err);
+                console.error('Guest login failed:', err);
                 showToast('ログイン処理中にエラーが発生しました', 'error');
             }
         }
         btnGuestLogin.addEventListener('click', loginAsGuest);
 
-        // Sign Out
+        // Sign Out Event
         btnLogout.addEventListener('click', async () => {
             await signOut(auth);
             showToast('ログアウトしました', 'info');
         });
 
-        // Firestore Realtime Listener
         function subscribeToBorrowings() {
             if (!currentUser) return;
 
-            // MANDATORY RULE 1: Public data path -> /artifacts/{appId}/public/data/borrowings
+            // MANDATORY RULE 1: /artifacts/{appId}/public/data/borrowings
             const borrowingsCol = collection(db, 'artifacts', appId, 'public', 'data', 'borrowings');
 
             onSnapshot(borrowingsCol, (snapshot) => {
@@ -511,26 +556,26 @@
                     });
                 });
 
-                // Sort in memory by created timestamp or due date
+                // Rule 2: Sort in JS memory
                 borrowings = items.sort((a, b) => {
                     return new Date(b.createdAt || 0) - new Date(a.createdAt || 0);
                 });
 
                 renderAll();
             }, (error) => {
-                console.error("Firestore subscription error:", error);
-                showToast("データ読み込み中にエラーが発生しました", "error");
+                console.error("Firestore real-time sync error:", error);
+                showToast("データ同期中にエラーが発生しました", "error");
             });
         }
 
-        // Rendering Master Function
+        // Render Controller
         function renderAll() {
             renderMetrics();
             renderList();
             lucide.createIcons();
         }
 
-        // Render Summary Stats
+        // Render Summary Counters
         function renderMetrics() {
             const total = borrowings.length;
             const borrowed = borrowings.filter(b => b.status === '未返却').length;
@@ -541,21 +586,32 @@
             document.getElementById('stat-borrowed').textContent = borrowed;
             document.getElementById('stat-returned').textContent = returned;
             document.getElementById('stat-overdue').textContent = overdue;
+
+            // Badge count in tab
+            const badgeOverdue = document.getElementById('badge-overdue-count');
+            if (overdue > 0) {
+                badgeOverdue.textContent = overdue;
+                badgeOverdue.classList.remove('hidden');
+            } else {
+                badgeOverdue.classList.add('hidden');
+            }
         }
 
-        // Filter and Search logic
+        // Filter Logic
         function getFilteredBorrowings() {
             return borrowings.filter(item => {
+                const overdue = isOverdue(item.dueDate, item.status);
+
                 // Status Filter
                 if (currentFilter === 'borrowed' && item.status !== '未返却') return false;
                 if (currentFilter === 'returned' && item.status !== '返却済み') return false;
-                if (currentFilter === 'overdue' && !isOverdue(item.dueDate, item.status)) return false;
+                if (currentFilter === 'overdue' && !overdue) return false;
 
-                // Search Filter
+                // Search Query Filter
                 if (searchQuery.trim() !== '') {
                     const q = searchQuery.toLowerCase();
-                    const itemNameMatch = item.itemName?.toLowerCase().includes(q);
-                    const borrowerMatch = item.borrowerName?.toLowerCase().includes(q);
+                    const itemNameMatch = (item.itemName || '').toLowerCase().includes(q);
+                    const borrowerMatch = (item.borrowerName || '').toLowerCase().includes(q);
                     return itemNameMatch || borrowerMatch;
                 }
 
@@ -563,7 +619,6 @@
             });
         }
 
-        // Render Table and Cards
         function renderList() {
             const items = getFilteredBorrowings();
             const tableBody = document.getElementById('table-body');
@@ -584,30 +639,34 @@
                 const overdue = isOverdue(item.dueDate, item.status);
                 const isReturned = item.status === '返却済み';
 
-                // Status Badge styling
-                let statusBadge = '';
-                let rowBgClass = isReturned ? 'bg-slate-50/50 text-slate-500' : (overdue ? 'bg-rose-50/70 border-l-4 border-rose-500' : 'bg-white');
+                // Status Badge & Highlight Styling
+                let statusBadgeHtml = '';
+                let rowStyleClass = '';
 
                 if (isReturned) {
-                    statusBadge = `<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800"><i data-lucide="check" class="w-3 h-3"></i> 返却済み</span>`;
+                    statusBadgeHtml = `<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800"><i data-lucide="check" class="w-3.5 h-3.5"></i> 返却済み</span>`;
+                    rowStyleClass = 'bg-slate-50/60 text-slate-500';
                 } else if (overdue) {
-                    statusBadge = `<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-rose-100 text-rose-800 pulse-danger"><i data-lucide="alert-circle" class="w-3 h-3"></i> 返却期限切れ</span>`;
+                    // Overdue Highlight (Requirement 5)
+                    statusBadgeHtml = `<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-extrabold bg-rose-100 text-rose-800 border border-rose-300 pulse-danger"><i data-lucide="alert-triangle" class="w-3.5 h-3.5 text-rose-600"></i> 延滞中</span>`;
+                    rowStyleClass = 'bg-rose-50/80 border-l-4 border-rose-500 hover:bg-rose-100/60';
                 } else {
-                    statusBadge = `<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-800"><i data-lucide="clock" class="w-3 h-3"></i> 貸出中 (未返却)</span>`;
+                    statusBadgeHtml = `<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-800"><i data-lucide="clock" class="w-3.5 h-3.5"></i> 貸出中 (未返却)</span>`;
+                    rowStyleClass = 'bg-white hover:bg-slate-50';
                 }
 
-                // Table Row HTML
+                // Table Row
                 const tr = document.createElement('tr');
-                tr.className = `hover:bg-slate-100/60 transition ${rowBgClass}`;
+                tr.className = `transition ${rowStyleClass}`;
                 tr.innerHTML = `
-                    <td class="py-3 px-4">${statusBadge}</td>
-                    <td class="py-3 px-4 font-bold text-slate-900">${escapeHtml(item.itemName)}</td>
-                    <td class="py-3 px-4 font-medium text-slate-700">${escapeHtml(item.borrowerName)}</td>
-                    <td class="py-3 px-4 text-xs text-slate-500">${formatDateJa(item.borrowDate)}</td>
-                    <td class="py-3 px-4 text-xs ${overdue ? 'font-bold text-rose-600' : 'text-slate-600'}">${formatDateJa(item.dueDate)}</td>
-                    <td class="py-3 px-4 text-right">
+                    <td class="py-3.5 px-4">${statusBadgeHtml}</td>
+                    <td class="py-3.5 px-4 font-bold text-slate-900">${escapeHtml(item.itemName)}</td>
+                    <td class="py-3.5 px-4 font-medium text-slate-700">${escapeHtml(item.borrowerName)}</td>
+                    <td class="py-3.5 px-4 text-xs text-slate-500">${formatDateJa(item.borrowDate)}</td>
+                    <td class="py-3.5 px-4 text-xs ${overdue ? 'font-bold text-rose-600 underline decoration-rose-300' : 'text-slate-600'}">${formatDateJa(item.dueDate)}</td>
+                    <td class="py-3.5 px-4 text-right">
                         <div class="flex items-center justify-end space-x-2">
-                            <button onclick="toggleRecordStatus('${item.id}', '${item.status}')" class="px-2.5 py-1 text-xs font-medium rounded-lg border ${isReturned ? 'border-slate-300 hover:bg-slate-200 text-slate-700' : 'border-emerald-300 bg-emerald-50 text-emerald-700 hover:bg-emerald-100'} transition">
+                            <button onclick="toggleRecordStatus('${item.id}', '${item.status}')" class="px-3 py-1 text-xs font-semibold rounded-xl border transition shadow-sm ${isReturned ? 'border-slate-300 bg-white hover:bg-slate-100 text-slate-700' : 'border-emerald-500 bg-emerald-50 text-emerald-700 hover:bg-emerald-100'}">
                                 ${isReturned ? '未返却に戻す' : '返却済みにする'}
                             </button>
                             <button onclick="openEditModal('${item.id}')" class="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition" title="編集">
@@ -621,12 +680,12 @@
                 `;
                 tableBody.appendChild(tr);
 
-                // Mobile Card HTML
+                // Mobile Card View
                 const card = document.createElement('div');
-                card.className = `p-4 space-y-3 ${rowBgClass}`;
+                card.className = `p-4 space-y-3 ${rowStyleClass}`;
                 card.innerHTML = `
                     <div class="flex items-center justify-between">
-                        ${statusBadge}
+                        ${statusBadgeHtml}
                         <div class="flex items-center space-x-1">
                             <button onclick="openEditModal('${item.id}')" class="p-1.5 text-slate-400 hover:text-indigo-600 rounded-lg">
                                 <i data-lucide="edit-3" class="w-4 h-4"></i>
@@ -638,14 +697,14 @@
                     </div>
                     <div>
                         <p class="text-base font-bold text-slate-900">${escapeHtml(item.itemName)}</p>
-                        <p class="text-xs text-slate-600 mt-0.5">借りた人: <span class="font-semibold text-slate-800">${escapeHtml(item.borrowerName)}</span></p>
+                        <p class="text-xs text-slate-600 mt-1">借りた人: <span class="font-semibold text-slate-800">${escapeHtml(item.borrowerName)}</span></p>
                     </div>
                     <div class="flex items-center justify-between text-xs text-slate-500 pt-2 border-t border-slate-200/60">
                         <div>貸出: ${formatDateJa(item.borrowDate)}</div>
                         <div class="${overdue ? 'font-bold text-rose-600' : ''}">返却予定: ${formatDateJa(item.dueDate)}</div>
                     </div>
                     <button onclick="toggleRecordStatus('${item.id}', '${item.status}')" class="w-full py-2 text-xs font-semibold rounded-xl border ${isReturned ? 'border-slate-300 bg-white text-slate-700' : 'bg-emerald-600 text-white hover:bg-emerald-700'} transition shadow-sm">
-                        ${isReturned ? '未返却状態に戻す' : '返却済みに更新'}
+                        ${isReturned ? '未返却状態に戻す' : '返却済みに更新する'}
                     </button>
                 `;
                 cardList.appendChild(card);
@@ -665,14 +724,30 @@
             });
         }
 
-        // Form & Modal Event Handlers
+        // Reset Error UI
+        function clearValidationErrors() {
+            document.getElementById('form-error-alert').classList.add('hidden');
+            const fields = [inputItemName, inputBorrowerName, inputBorrowDate, inputDueDate];
+            fields.forEach(f => {
+                f.classList.remove('border-rose-500', 'ring-2', 'ring-rose-200', 'bg-rose-50/30');
+            });
+            document.querySelectorAll('[id^="error-"]').forEach(el => el.classList.add('hidden'));
+        }
+
+        // Modal Open Trigger
         document.getElementById('btn-open-add-modal').addEventListener('click', () => {
-            document.getElementById('modal-title').textContent = '新規貸出記録の追加';
+            clearValidationErrors();
+            document.getElementById('modal-title').querySelector('span').textContent = '新規貸出の登録';
             inputEditId.value = '';
             formBorrowing.reset();
+
+            // Requirement 2: Auto-fill user's display name & default dates
+            const defaultName = currentUser?.displayName || currentUser?.email || '';
+            inputBorrowerName.value = defaultName;
             inputBorrowDate.value = getTodayString();
-            inputDueDate.value = getFutureDateString(3);
+            inputDueDate.value = getFutureDateString(7); // Default 1 week
             inputStatus.value = '未返却';
+
             modalRecord.classList.remove('hidden');
         });
 
@@ -683,17 +758,43 @@
             modalRecord.classList.add('hidden');
         }
 
-        // Preset Tag Autofill
+        // Quick Tag Auto-Fill
         document.querySelectorAll('.preset-tag').forEach(tag => {
             tag.addEventListener('click', (e) => {
                 inputItemName.value = e.target.textContent;
             });
         });
 
-        // Save (Add / Edit) Record
         formBorrowing.addEventListener('submit', async (e) => {
             e.preventDefault();
             if (!currentUser) return;
+
+            clearValidationErrors();
+
+            // Requirement 3: Client-side Validation Checks
+            let hasError = false;
+
+            if (!inputItemName.value.trim()) {
+                showFieldError(inputItemName, 'error-item-name');
+                hasError = true;
+            }
+            if (!inputBorrowerName.value.trim()) {
+                showFieldError(inputBorrowerName, 'error-borrower-name');
+                hasError = true;
+            }
+            if (!inputBorrowDate.value) {
+                showFieldError(inputBorrowDate, 'error-borrow-date');
+                hasError = true;
+            }
+            if (!inputDueDate.value) {
+                showFieldError(inputDueDate, 'error-due-date');
+                hasError = true;
+            }
+
+            if (hasError) {
+                document.getElementById('form-error-alert').classList.remove('hidden');
+                return;
+            }
 
             const editId = inputEditId.value;
             const recordData = {
@@ -725,12 +826,19 @@
             }
         });
 
-        // Global Edit Trigger
+        function showFieldError(inputElem, errorTextId) {
+            inputElem.classList.add('border-rose-500', 'ring-2', 'ring-rose-200', 'bg-rose-50/30');
+            const errorText = document.getElementById(errorTextId);
+            if (errorText) errorText.classList.remove('hidden');
+        }
+
+        // Global Edit Opener
         window.openEditModal = function(id) {
+            clearValidationErrors();
             const item = borrowings.find(b => b.id === id);
             if (!item) return;
 
-            document.getElementById('modal-title').textContent = '貸出記録の編集';
+            document.getElementById('modal-title').querySelector('span').textContent = '貸出記録の編集';
             inputEditId.value = item.id;
             inputItemName.value = item.itemName || '';
             inputBorrowerName.value = item.borrowerName || '';
@@ -758,7 +866,6 @@
             }
         };
 
-        // Delete Confirmation Modal Logic
         window.confirmDelete = function(id) {
             targetDeleteId = id;
             modalConfirm.classList.remove('hidden');
@@ -784,22 +891,22 @@
             }
         });
 
-        // Search Input Listener
+        // Realtime Search Listener
         document.getElementById('input-search').addEventListener('input', (e) => {
             searchQuery = e.target.value;
             renderList();
             lucide.createIcons();
         });
 
-        // Filter Tabs Listener
+        // Filter Tabs Click Handlers
         document.querySelectorAll('.filter-tab').forEach(tab => {
             tab.addEventListener('click', (e) => {
                 document.querySelectorAll('.filter-tab').forEach(t => {
-                    t.classList.remove('active', 'bg-white', 'shadow-sm', 'text-indigo-600');
+                    t.classList.remove('active', 'bg-white', 'shadow-sm', 'text-indigo-600', 'font-bold');
                     t.classList.add('text-slate-600');
                 });
                 const clicked = e.currentTarget;
-                clicked.classList.add('active', 'bg-white', 'shadow-sm', 'text-indigo-600');
+                clicked.classList.add('active', 'bg-white', 'shadow-sm', 'text-indigo-600', 'font-bold');
                 clicked.classList.remove('text-slate-600');
 
                 currentFilter = clicked.dataset.filter;
@@ -808,8 +915,8 @@
             });
         });
 
-        // Set Default Active Tab Visual
-        document.querySelector('.filter-tab[data-filter="all"]').classList.add('bg-white', 'shadow-sm', 'text-indigo-600');
+        // Set Default Active Filter Visual
+        document.querySelector('.filter-tab[data-filter="all"]').classList.add('bg-white', 'shadow-sm', 'text-indigo-600', 'font-bold');
 
     </script>
 </body>
